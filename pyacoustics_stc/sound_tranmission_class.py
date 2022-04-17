@@ -17,7 +17,7 @@ class SoundTransmissionClass:
 
         self._stc_point: int = None
         self._stc_contour: Dict[int, float] = {}
-        self._defiency: int = None
+        self._deficiency: int = None
         self._delta: Dict[int, float] = {}
         self._stl_stc_delta_contours: Dict[int, float] = {}
 
@@ -48,7 +48,7 @@ class SoundTransmissionClass:
         """
         Sum of delta values between STL and STC.
         """
-        return self._defiency
+        return self._deficiency
 
     @property
     def delta(self) -> Dict[int, float]:
@@ -89,6 +89,13 @@ class SoundTransmissionClass:
             bbox=dict(facecolor="cyan", alpha=0.5),
             xycoords="axes fraction",
         )
+        plt.annotate(
+            f"Deficiency {self._deficiency}",
+            xy=(0.09, 0.960),
+            fontsize=10,
+            bbox=dict(facecolor="yellow", alpha=0.5),
+            xycoords="axes fraction",
+        )
         plt.xticks(x_axis_index, x_axis_frequency, fontsize=12)
         plt.yticks(fontsize=12)
         plt.grid(linestyle="-", linewidth=0.5)
@@ -116,7 +123,7 @@ class SoundTransmissionClass:
             freq: round(value, MAX_DIGIT)
             for freq, value in filtered_delta_contours[self._stc_point].items()
         }
-        self._defiency = round(
+        self._deficiency = round(
             sum(
                 [
                     stc_value
