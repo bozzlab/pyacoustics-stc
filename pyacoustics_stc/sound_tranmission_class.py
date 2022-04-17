@@ -7,7 +7,7 @@ from pyacoustics_stc.constant import (
     FREQUENCY_BAND,
     MAX_DELTA_PER_FREQUENCY,
     MAX_SUM_CONTOUR,
-    MAX_DIGIT
+    MAX_DIGIT,
 )
 
 
@@ -112,13 +112,19 @@ class SoundTransmissionClass:
         filtered_delta_contours = self._filter_delta_contours(stl_stc_delta_contours)
 
         self._stc_point = self._get_stc_point(filtered_delta_contours)
-        self._delta = {freq:round(value,MAX_DIGIT) for freq, value in filtered_delta_contours[self._stc_point].items()}
-        self._defiency = round(sum(
-            [
-                stc_value
-                for stc_value in filtered_delta_contours[self._stc_point].values()
-            ]
-        ), MAX_DIGIT)
+        self._delta = {
+            freq: round(value, MAX_DIGIT)
+            for freq, value in filtered_delta_contours[self._stc_point].items()
+        }
+        self._defiency = round(
+            sum(
+                [
+                    stc_value
+                    for stc_value in filtered_delta_contours[self._stc_point].values()
+                ]
+            ),
+            MAX_DIGIT,
+        )
         self._stc_contour = STC_CONTOURS[self._stc_point]
 
     def _build_stl_stc_delta_contours(self) -> Dict[int, float]:
