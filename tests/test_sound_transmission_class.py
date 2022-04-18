@@ -45,9 +45,9 @@ stl_without_key = [
 ]
 
 # Expect value
-stc_point = 29
+stc_index = 29
 stc_deficiency = 25.579
-stc_contour = STC_CONTOURS[stc_point]
+stc_contour = STC_CONTOURS[stc_index]
 
 
 @pytest.fixture
@@ -60,9 +60,9 @@ def frequency_stl_map():
     return build_frequency_stl_map(stl_without_key)
 
 
-def test_stc_point(sound_tranmission_class):
-    assert isinstance(stc_point, int)
-    assert stc_point == sound_tranmission_class.point
+def test_stc_index(sound_tranmission_class):
+    assert isinstance(stc_index, int)
+    assert stc_index == sound_tranmission_class.index
 
 
 def test_stc_contour(sound_tranmission_class):
