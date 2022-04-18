@@ -15,22 +15,22 @@ class SoundTransmissionClass:
     def __init__(self, stl: Dict[int, float]):
         self.stl = stl
 
-        self._stc_point: int = None
+        self._stc_index: int = None
         self._stc_contour: Dict[int, float] = {}
         self._deficiency: int = None
         self._delta: Dict[int, float] = {}
         self._stl_stc_delta_contours: Dict[int, float] = {}
 
-        self._evaluate()
+        self._calculate()
 
     @property
     def contour(self) -> Dict[int, float]:
         """
-        STC contour of STC point.
+        STC contour of STC index.
 
         example:
 
-        STC Point = 20
+        STC index = 20
 
         return:
             {
@@ -58,11 +58,11 @@ class SoundTransmissionClass:
         return self._delta
 
     @property
-    def point(self) -> int:
+    def index(self) -> int:
         """
-        STC Point in range 0 -> 149.
+        STC index in range 0 -> 149.
         """
-        return self._stc_point
+        return self._stc_index
 
     def _plot(self) -> plt:
         x_axis_frequency = []
@@ -78,7 +78,7 @@ class SoundTransmissionClass:
         plt.figure(figsize=(18, 8))
 
         # plot values
-        plt.plot(y_axis_stc, "r--", label=f"STC {self._stc_point}")
+        plt.plot(y_axis_stc, "r--", label=f"STC {self._stc_index}")
         plt.plot(y_axis_stl, "b", label="STL")
 
         # config
@@ -114,35 +114,35 @@ class SoundTransmissionClass:
         plt = self._plot()
         plt.savefig(f"{filename}")
 
-    def _evaluate(self):
+    def _calculate(self):
         stl_stc_delta_contours = self._build_stl_stc_delta_contours()
         filtered_delta_contours = self._filter_delta_contours(stl_stc_delta_contours)
 
-        self._stc_point = self._get_stc_point(filtered_delta_contours)
+        self._stc_index = self._get_stc_index(filtered_delta_contours)
         self._delta = {
             freq: round(value, MAX_DIGIT)
-            for freq, value in filtered_delta_contours[self._stc_point].items()
+            for freq, value in filtered_delta_contours[self._stc_index].items()
         }
         self._deficiency = round(
             sum(
                 [
                     stc_value
-                    for stc_value in filtered_delta_contours[self._stc_point].values()
+                    for stc_value in filtered_delta_contours[self._stc_index].values()
                 ]
             ),
             MAX_DIGIT,
         )
-        self._stc_contour = STC_CONTOURS[self._stc_point]
+        self._stc_contour = STC_CONTOURS[self._stc_index]
 
     def _build_stl_stc_delta_contours(self) -> Dict[int, float]:
         """
         Building STL and STC delta contours.
-        Calculate delta between STL and STC value for each STC point and frequency.
+        Calculate delta between STL and STC value for each STC index and frequency.
 
         Structure data of `stl_stc_delta_contours`:
 
         {
-            stc_point (int): {
+            str_raint (int): {
                 Freq (int): delta_value (float)
             }
         }
@@ -167,15 +167,15 @@ class SoundTransmissionClass:
         """
         stl_stc_delta_contours: Dict[int, float] = {}
 
-        for stc_point, stc_contour in STC_CONTOURS.items():
-            stl_stc_delta_contours[stc_point] = {}
+        for _stc_index, stc_contour in STC_CONTOURS.items():
+            stl_stc_delta_contours[_stc_index] = {}
             for freq, value in stc_contour.items():
                 if self.stl[freq] < value:
-                    stl_stc_delta_contours[stc_point][freq] = abs(
+                    stl_stc_delta_contours[_stc_index][freq] = abs(
                         self.stl[freq] - value
                     )
                 else:
-                    stl_stc_delta_contours[stc_point][freq] = 0
+                    stl_stc_delta_contours[_stc_index][freq] = 0
 
         return stl_stc_delta_contours
 
@@ -190,21 +190,21 @@ class SoundTransmissionClass:
         filtered_delta_contours: Dict[int, float] = {}
 
         filtered_sum_delta_contours: Dict[int, float] = {
-            stc_point: stc_contour
-            for stc_point, stc_contour in stl_stc_delta_contours.items()
+            _stc_index: stc_contour
+            for _stc_index, stc_contour in stl_stc_delta_contours.items()
             if sum([stc_value for stc_value in stc_contour.values()]) <= MAX_SUM_CONTOUR
         }
 
-        for stc_point, stc_contour in filtered_sum_delta_contours.items():
+        for _stc_index, stc_contour in filtered_sum_delta_contours.items():
             filtered_values = [
                 value
                 for value in stc_contour.values()
                 if value < MAX_DELTA_PER_FREQUENCY
             ]
             if len(filtered_values) == len(FREQUENCY_BAND):
-                filtered_delta_contours[stc_point] = stc_contour
+                filtered_delta_contours[_stc_index] = stc_contour
 
         return filtered_delta_contours
 
-    def _get_stc_point(self, filtered_delta_contours: Dict[int, float]) -> int:
+    def _get_stc_index(self, filtered_delta_contours: Dict[int, float]) -> int:
         return max(filtered_delta_contours.keys())

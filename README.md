@@ -20,7 +20,7 @@ stl = {
 
 stc = SoundTransmissionClass(stl=stl)
 
-stc.point
+stc.index
 # 29
 stc.deficiency
 # 25.579
