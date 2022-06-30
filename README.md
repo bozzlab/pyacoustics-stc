@@ -1,11 +1,12 @@
 # pyacoustics-stc
 The Python library for Sound Transmission Class (STC) calculation
 
-# Installation
+## Installation
 ```
 pip install pyacoustics-stc
 ```
-## Example
+## Quickstart
+-----
 ### Calculate STC
 ```py
 from pyacoustics_stc import SoundTransmissionClass
@@ -33,7 +34,16 @@ stc.delta
 ### Visualization
 ```py
 stc.plot() # display result as graph
-stc.export_graph_result("stc.png") # save graph result as image
+```
+Interactive Graph by [Plotly](https://plotly.com/)
+
+
+### Static File Export
+
+```py
+stc.export_graph_to_file("stc.png") # save graph result as PNG image file
+stc.export_graph_to_file("stc.jpeg") # save graph result as JPEG image file
+stc.export_graph_to_file("stc.pdf") # save graph result as PDF file
 
 # <your_local_path>/stc.png
 ```
@@ -60,4 +70,9 @@ stl
 ## Testing
 ```
 python -m pytest
+```
+
+## Formatter
+```
+black pyacoustics_stc 
 ```

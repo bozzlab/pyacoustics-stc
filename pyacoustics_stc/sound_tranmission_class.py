@@ -1,6 +1,7 @@
 from typing import List, Dict
 
-import matplotlib.pylab as plt
+import plotly.graph_objects as go
+import plotly.io as pio
 
 from pyacoustics_stc.constant import (
     STC_CONTOURS,
@@ -9,6 +10,10 @@ from pyacoustics_stc.constant import (
     MAX_SUM_CONTOUR,
     MAX_DIGIT,
 )
+
+
+FONT = "Open Sans, verdana, arial, sans-serif"
+BLACK = "black"
 
 
 class SoundTransmissionClass:
@@ -64,55 +69,108 @@ class SoundTransmissionClass:
         """
         return self._stc_index
 
-    def _plot(self) -> plt:
-        x_axis_frequency = []
-        x_axis_index = []
-
-        for index, frequency in enumerate(FREQUENCY_BAND):
-            x_axis_frequency.append(frequency)
-            x_axis_index.append(index)
-
+    def _plot(self) -> go.Figure:
         y_axis_stl = [value for value in self.stl.values()]
         y_axis_stc = [value for value in self._stc_contour.values()]
 
-        plt.figure(figsize=(18, 8))
-
-        # plot values
-        plt.plot(y_axis_stc, "r--", label=f"STC {self._stc_index}")
-        plt.plot(y_axis_stl, "b", label="STL")
-
-        # config
-        plt.annotate(
-            "Source: https://github.com/bozzlab/pyacoustics-stc",
-            xy=(0.725, 0.04),
-            fontsize=10,
-            bbox=dict(facecolor="cyan", alpha=0.5),
-            xycoords="axes fraction",
+        stc_line = go.Scatter(
+            x=FREQUENCY_BAND,
+            y=y_axis_stc,
+            mode="lines+markers",
+            marker=dict(color="#FF0000", size=6),
+            line=dict(color="#FF0000", width=1, dash="dash"),
+            name=f"STC {self.index}",
         )
-        plt.annotate(
-            f"Deficiency {self._deficiency}",
-            xy=(0.09, 0.960),
-            fontsize=10,
-            bbox=dict(facecolor="yellow", alpha=0.5),
-            xycoords="axes fraction",
-        )
-        plt.xticks(x_axis_index, x_axis_frequency, fontsize=12)
-        plt.yticks(fontsize=12)
-        plt.grid(linestyle="-", linewidth=0.5)
-        plt.title("Sound Transmission Class (STC)", fontsize=15, y=1.05)
-        plt.legend(loc="upper left")
-        plt.xlabel("1/3 Octave Frequency [Hz]", fontsize=15)
-        plt.ylabel("(R) Sound Transmission loss [dB]", fontsize=15)
 
-        return plt
+        stl_line = go.Scatter(
+            x=FREQUENCY_BAND,
+            y=y_axis_stl,
+            mode="lines+markers+text",
+            marker=dict(color="#5D69B1", size=6),
+            line=dict(color="#0C00FF", width=1),
+            name="STL",
+        )
+
+        fig = go.Figure()
+
+        fig.add_trace(stc_line)
+        fig.add_trace(stl_line)
+
+        fig.update_xaxes(type="log", tickvals=FREQUENCY_BAND, ticktext=FREQUENCY_BAND)
+        fig.update_layout(
+            title=dict(
+                text="Sound Transmission Class (STC) / Sound Transmission Loss (STL)",
+                y=0.95,
+                x=0.5,
+                xanchor="center",
+                yanchor="top",
+                font=dict(family=FONT, size=25, color=BLACK),
+            ),
+            xaxis_title=dict(
+                text="1/3 Octave Frequency [Hz]",
+                font=dict(family=FONT, size=18, color=BLACK),
+            ),
+            yaxis_title=dict(
+                text="(R) Sound Transmission loss [dB]",
+                font=dict(family=FONT, size=18, color=BLACK),
+            ),
+            legend=dict(
+                yanchor="top",
+                y=0.99,
+                xanchor="left",
+                x=0.01,
+                font=dict(family=FONT, size=16, color=BLACK),
+                bgcolor="#D5EBFF",
+                bordercolor=BLACK,
+                borderwidth=1,
+            ),
+        )
+        fig.add_annotation(
+            x=0.985,
+            y=0.025,
+            xref="paper",
+            yref="paper",
+            text="Source: https://github.com/bozzlab/pyacoustics-stc",
+            showarrow=False,
+            font=dict(family=FONT, size=14, color=BLACK),
+            align="center",
+            bordercolor=BLACK,
+            borderwidth=1,
+            borderpad=4,
+            bgcolor="#00BDFF",
+            opacity=0.8,
+        )
+        fig.add_annotation(
+            x=0.080,
+            y=0.9875,
+            xref="paper",
+            yref="paper",
+            text=f"Deficiency {self._deficiency}",
+            showarrow=False,
+            font=dict(family=FONT, size=14, color=BLACK),
+            align="center",
+            bordercolor=BLACK,
+            borderwidth=1,
+            borderpad=4,
+            bgcolor="#C9FF00",
+            opacity=0.8,
+        )
+
+        return fig
 
     def plot(self):
-        plt = self._plot()
-        plt.show()
+        fig = self._plot()
+        fig.show()
 
-    def export_graph_result(self, filename: str):
-        plt = self._plot()
-        plt.savefig(f"{filename}")
+    def export_graph_to_file(self, filename: str, height=1080, width=1920):
+        """
+        File types supported PNG, JPEG, WebP, SVG and PDF
+        https://plotly.com/python/static-image-export/
+        """
+        fig = self._plot()
+        pio.kaleido.scope.default_height = height
+        pio.kaleido.scope.default_width = width
+        fig.write_image(filename)
 
     def _calculate(self):
         stl_stc_delta_contours = self._build_stl_stc_delta_contours()
