@@ -48,7 +48,7 @@ stc.export_graph_to_file("stc.pdf") # save graph result as PDF file
 
 # <your_local_path>/stc.png
 ```
-![Sound Transimission Class Graph](https://raw.githubusercontent.com/bozzlab/pyacoustics-stc/main/stc.png)
+![Sound Transimission Class Graph](https://raw.githubusercontent.com/bozzlab/pyacoustics-stc/release/update-python-version-and-dependencies/stc.png)
 
 
 ### Utils 
