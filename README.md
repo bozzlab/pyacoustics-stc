@@ -37,7 +37,7 @@ stc.plot() # display result as graph
 ```
 Interactive Graph by [Plotly](https://plotly.com/)
 
-![Interactive Graph on Browser](https://raw.githubusercontent.com/bozzlab/pyacoustics-stc/release/update-python-version-and-dependencies/graph_on_browser.png)
+![Interactive Graph on Browser](https://raw.githubusercontent.com/bozzlab/pyacoustics-stc/main/graph_on_browser.png)
 
 ### Static File Export
 
@@ -48,7 +48,7 @@ stc.export_graph_to_file("stc.pdf") # save graph result as PDF file
 
 # <your_local_path>/stc.png
 ```
-![Sound Transimission Class Graph](https://raw.githubusercontent.com/bozzlab/pyacoustics-stc/release/update-python-version-and-dependencies/stc.png)
+![Sound Transimission Class Graph](https://raw.githubusercontent.com/bozzlab/pyacoustics-stc/main/stc.png)
 
 
 ### Utils 
