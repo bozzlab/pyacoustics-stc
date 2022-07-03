@@ -37,6 +37,7 @@ stc.plot() # display result as graph
 ```
 Interactive Graph by [Plotly](https://plotly.com/)
 
+![Interactive Graph on Browser](https://raw.githubusercontent.com/bozzlab/pyacoustics-stc/release/update-python-version-and-dependencies/graph_on_browser.png)
 
 ### Static File Export
 
